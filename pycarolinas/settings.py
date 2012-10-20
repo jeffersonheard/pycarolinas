@@ -113,11 +113,14 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
+    'django.contrib.gis',
+    'south',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 
     'ga_ows',
-    'pycarolinas',
+    'ga_app',
+    'django_pothole',
 )
 
 # A sample logging configuration. The only tangible logging
