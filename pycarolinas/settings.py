@@ -1,3 +1,5 @@
+import pymongo
+
 # Django settings for pycarolinas project.
 
 DEBUG = True
@@ -18,6 +20,14 @@ DATABASES = {
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
+}
+
+MONGODB_CONNECTIONS = {
+    'default' : pymongo.Connection()
+}
+
+MONGODB_ROUTES = {
+    'default' : MONGODB_CONNECTIONS['default']['default']
 }
 
 # Local time zone for this installation. Choices can be found here:
