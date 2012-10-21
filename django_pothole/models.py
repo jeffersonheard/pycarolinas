@@ -12,9 +12,19 @@ class Pothole(Model):
     width = IntegerField()
     depth = IntegerField()
     when_logged = DateTimeField(auto_now_add=True)
+    number_of_logs = IntegerField(default=1)
 
     # override the default manager with one that can accept geographic queries
     objects = GeoManager()
+
+    def __unicode__(self):
+        return "{location_name}: {width}, {depth} at {when_logged} ({number_of_logs} times)".format(
+            location_name = self.location_name,
+            width = ['small','med','lg'][self.width],
+            depth = ['shallow','med','deep'][self.depth],
+            when_logged = self.when_logged.strftime("%y.%m.%d"),
+            number_of_logs = self.number_of_logs
+        )
 
 # Column   |         Type          |                     Modifiers
 # ------------+-----------------------+----------------------------------------------------
@@ -52,10 +62,11 @@ class Zcta(Model):
     intptlon10 = CharField(max_length=12, null=True)
     partflg10 = CharField(max_length=1, null=True)
 
-    geometry = MultiPolygonField()
+    geom = MultiPolygonField()
+    objects=GeoManager()
 
     class Meta:
-        db_table = "zcta"
+        db_table = "zipcodes"
         managed = False
 
 class Population(Model):
@@ -79,8 +90,10 @@ geocoder = geopy.geocoders.Google()
 @receiver(pre_save, sender=Pothole)
 def pothole_pre_save(sender, instance, *args, **kwargs):
     global geocoder
-    try:
-        instance.location_name = geocoder.reverse((instance.location.x, instance.location.y))[0]
-    except:
-        instance.location_name = "No nearby address."
+
+    if instance.location_name == '' or not instance.location_name:
+        try:
+            instance.location_name = geocoder.reverse((instance.location.x, instance.location.y))[0]
+        except:
+            instance.location_name = "No nearby address."
 
